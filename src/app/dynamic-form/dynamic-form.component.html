@@ -1,0 +1,116 @@
+<!-- ... previous code ... -->
+<mat-card class="card">
+  <mat-card-header>
+    <mat-card-title>Dynamic Form</mat-card-title>
+    <mat-card-subtitle>Form to demonstrate dynamic form</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" title="Dynamic Form" class="form" (ngSubmit)="submitForm()">
+      <mat-form-field>
+        <mat-label>Select an option</mat-label>
+        <mat-select formControlName="componentType" (selectionChange)="onOptionSelected($event)">
+          <mat-option *ngFor="let option of options" [value]="option.value">{{
+            option.label
+            }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <ng-container *ngFor="let field of currentFormFields.fields; let i = index">
+        <ng-container [ngSwitch]="field.type">
+          <ng-container *ngSwitchCase="'text'">
+            <mat-form-field>
+              <mat-label>{{ field.label }}</mat-label>
+              <input [type]="field.type" matInput [formControlName]="field.name" [placeholder]="field.label"
+                [name]="field.name" [value]="field?.defaultValue" />
+              <mat-error *ngIf="fieldError(field.name, 'required')">{{ field.name }} is required</mat-error>
+              <mat-error *ngIf="fieldError(field.name, 'minlength')">{{ field.name }} must be
+                {{field?.validators?.['minlength']}} characters or
+                more</mat-error>
+              <mat-error *ngIf="fieldError(field.name, 'maxlength')">{{ field.name }} must be
+                {{field?.validators?.['maxlength']}} characters or
+                less</mat-error>
+
+              <mat-error *ngIf="fieldError(field.name, 'min')">{{ field.name }} must be greater then
+                {{field?.validators?.['minlength']}} characters or
+                more</mat-error>
+              <mat-error *ngIf="fieldError(field.name, 'max')">{{ field.name }} must be
+                {{field?.validators?.['minlength']}} or less</mat-error>
+              <mat-error *ngIf="fieldError(field.name, 'email')">{{ field.name }} must be a valid email</mat-error>
+            </mat-form-field>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'number'">
+            <mat-form-field>
+              <mat-label>{{ field.label }}</mat-label>
+              <input matInput type="number" [formControlName]="field.name" [placeholder]="field.label"
+                [name]="field.name" />
+              <mat-error *ngIf="fieldError(field.name, 'required')">{{ field.name }} is required</mat-error>
+              <mat-error *ngIf="fieldError(field.name, 'minlength')">{{ field.name }} must be
+                {{field?.validators?.['minlength']}} characters or
+                more</mat-error>
+              <mat-error *ngIf="fieldError(field.name, 'maxlength')">{{ field.name }} must be
+                {{field?.validators?.['maxlength']}} characters or
+                less</mat-error>
+
+              <mat-error *ngIf="fieldError(field.name, 'min')">{{ field.name }} must be greater then or equal to
+                {{field?.validators?.['min']}}</mat-error>
+              <mat-error *ngIf="fieldError(field.name, 'max')">{{ field.name }} must be less then or equal to
+                {{field?.validators?.['max']}}</mat-error>
+            </mat-form-field>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'select'">
+            <mat-form-field>
+              <mat-label>{{ field.label }}</mat-label>
+              <mat-select [formControlName]="field.name" placeholder="select a value"
+                [attr.required]="field?.validators?.['required']">
+                <mat-option *ngFor="let option of field.options" [value]="option">{{ option }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="fieldError(field.name, 'required')">{{ field.name }} is required</mat-error>
+            </mat-form-field>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'multiple'">
+            <mat-label>{{ field.label }} <span *ngIf="field.max">({{field.max}})</span> </mat-label>
+            <div class="multiple-item">
+              <div [formArrayName]="field.name" *ngFor="
+                  let item of getMultipleFieldValue(field.name).controls;
+                  let j = index
+                " class="form-array-input-wrapper">
+                <!-- <ng-container [formGroupName]="j" class="form-array-input"> -->
+
+                <mat-form-field>
+                  <mat-label>{{ field.label }}</mat-label>
+                  <input type="text" [formControlName]="j" [attr.name]="j" [placeholder]="'Value ' + (j + 1)"
+                    matInput />
+                  <mat-error *ngIf="fieldError(field.name, 'minlength', item)">{{ field.name }} must be
+                    {{field?.validators?.['minlength']}} characters or
+                    more</mat-error>
+                  <mat-error *ngIf="fieldError(field.name, 'maxlength', item)">{{ field.name }} must be
+                    {{field?.validators?.['maxlength']}} characters or
+                    less</mat-error>
+                </mat-form-field>
+                <button mat-icon-button color="warn" (click)="removeMultipleValueField(field.name, j)">
+                  <mat-icon>remove_circle</mat-icon>
+                </button>
+                <!-- </ng-container> -->
+              </div>
+            </div>
+            <br />
+            <button class="add" mat-icon-button color="primary" (click)="addMultipleValueField(field.name)" [disabled]="
+                getMultipleFieldValue(field.name).controls.length >=
+                (field.max || 100)
+              ">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <br />
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <button type="submit" class="submit" color="primary" mat-raised-button>
+        Submit
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

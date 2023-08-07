@@ -1,0 +1,32 @@
+
+.card{
+  max-width: 500px;
+  margin:auto;
+
+}
+
+mat-form-field{
+  display: block;
+  width:100%;
+}
+
+
+.add{
+  font-size: 1rem;
+}
+.submit{
+  width:100%;
+}
+
+.multiple-item{
+  display: grid;
+  // create two columns
+  grid-template-columns: 1fr 1fr;
+
+}
+
+.form-array-input-wrapper{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
